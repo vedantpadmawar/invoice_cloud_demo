@@ -16,12 +16,12 @@ spec:
     spec:
       containers:
         - name: invoice-app
-          image: DOCKERHUB_USERNAME/invoice-app:v1
+          image: vedantpadmawar/invoice-app:v1
           ports:
             - containerPort: 5000
           env:
             - name: S3_BUCKET
-              value: "YOUR-BUCKET-NAME"
+              value: "invoice-cloud-demo-vedant-padmawar"
             - name: AWS_REGION
               value: "ap-south-1"
             - name: APP_VERSION
