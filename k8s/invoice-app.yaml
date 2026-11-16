@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: invoice-app
-          image: vedantpadmawar/invoice-app:v1
+          image: vedantpadmawar/invoice-app:v2
           ports:
             - containerPort: 5000
           env:
