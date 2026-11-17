@@ -21,6 +21,10 @@ APP_VERSION = os.environ.get("APP_VERSION", "v2")
 INVOICE_DIR.mkdir(parents=True, exist_ok=True)
 
 app = Flask(__name__)
+# Kubernetes health check
+@app.route("/health")
+def health():
+    return {"status": "healthy"}, 200
 
 
 # Generate unique invoice ID
