@@ -2,43 +2,137 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Invoice Cloud Demo</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 30px 16px; }
-    .card { background: #fff; max-width: 520px; margin: 0 auto 20px; padding: 24px;
-            border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-    h1 { margin-top: 0; font-size: 22px; }
-    label { display: block; margin-top: 10px; font-size: 14px; color: #444; }
-    input { width: 100%; padding: 8px; box-sizing: border-box; margin-top: 4px; }
-    button { margin-top: 16px; width: 100%; padding: 12px; font-size: 16px; border: 0;
-             border-radius: 4px; background: #1f7a4d; color: #fff; cursor: pointer; }
-    .msg { background: #e8f5ee; padding: 10px; border-radius: 4px; font-size: 14px; }
-    .meta { font-size: 12px; color: #777; }
-    li { font-family: monospace; font-size: 13px; }
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <div class="card">
-    <h1>Invoice Cloud Demo by Vedant Padmawar</h1>
-    <p class="meta">Version: {{ version }} | Served by: {{ host }} | S3 bucket: {{ bucket }}</p>
-    {% if message %}<p class="msg">{{ message }}</p>{% endif %}
-    <form method="post" action="/invoice">
-      <label>Customer name <input name="customer" value="Demo Student" required></label>
-      <label>Customer email <input name="email" type="email" value="student@example.com"></label>
-      <label>Item <input name="item" value="Cloud Computing Textbook" required></label>
-      <label>Quantity <input name="quantity" type="number" min="1" value="2" required></label>
-      <label>Unit price (Rs) <input name="unit_price" type="number" min="0" step="0.01" value="450" required></label>
-      <button type="submit">Generate Invoice</button>
-    </form>
-  </div>
-  <div class="card">
-    <h2 style="font-size:18px;margin-top:0">Latest files in the invoice folder</h2>
-    {% if invoices %}
-      <ul>{% for name in invoices %}<li>{{ name }}</li>{% endfor %}</ul>
-    {% else %}
-      <p class="meta">No invoices yet.</p>
-    {% endif %}
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">IC</div>
+        <div><strong>InvoiceCloud</strong><span>Management Portal</span></div>
+      </div>
+      <nav class="nav">
+        <a class="nav-link active" href="/">▦ <span>Dashboard</span></a>
+        <a class="nav-link" href="#create-invoice">＋ <span>Create Invoice</span></a>
+        <a class="nav-link" href="#invoice-history">▤ <span>Invoice History</span></a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="cloud-badge">☁ <span>Cloud connected</span></div>
+        <small>Flask · AWS · Kubernetes</small>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">WORKSPACE / OVERVIEW</p>
+          <h1>Invoice Dashboard</h1>
+          <p class="subtitle">Create and manage your invoices in one place.</p>
+        </div>
+        <div class="user-chip"><span class="avatar">V</span><span>Vedant</span></div>
+      </header>
+
+      <section class="welcome-panel">
+        <div>
+          <p class="welcome-label">WELCOME BACK</p>
+          <h2>Manage your invoices smarter.</h2>
+          <p>Generate an invoice and securely store it using your cloud workflow.</p>
+        </div>
+        <div class="welcome-icon">▤</div>
+      </section>
+
+      <section class="stats-grid">
+        <article class="stat-card">
+          <div class="stat-icon blue">▤</div>
+          <div><p class="stat-label">INVOICE STORAGE</p><h3>Amazon S3</h3><span class="stat-note">Cloud object storage</span></div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon violet">⚙</div>
+          <div><p class="stat-label">PROCESSING</p><h3>AWS Lambda</h3><span class="stat-note">Event-driven processing</span></div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon green">✓</div>
+          <div><p class="stat-label">APPLICATION</p><h3>Operational</h3><span class="stat-note">Flask on Kubernetes</span></div>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel form-panel" id="create-invoice">
+          <div class="panel-heading">
+            <div><p class="eyebrow">NEW DOCUMENT</p><h2>Create Invoice</h2></div>
+            <span class="step-pill">STEP 1 OF 1</span>
+          </div>
+
+          {% if message %}
+          <div class="alert success">{{ message }}</div>
+          {% endif %}
+          {% if error %}
+          <div class="alert error">{{ error }}</div>
+          {% endif %}
+
+          <form method="post" action="/invoice">
+            <div class="form-grid">
+              <div class="field full-width">
+                <label for="customer">Customer name</label>
+                <input id="customer" name="customer" type="text" placeholder="Enter customer name" value="Demo Student" required>
+              </div>
+              <div class="field full-width">
+                <label for="email">Customer email <span class="optional">OPTIONAL</span></label>
+                <input id="email" name="email" type="email" placeholder="name@example.com" value="student@example.com">
+              </div>
+              <div class="field full-width">
+                <label for="item">Item description</label>
+                <input id="item" name="item" type="text" placeholder="What are you billing for?" value="Cloud Computing Textbook" required>
+              </div>
+              <div class="field">
+                <label for="quantity">Quantity</label>
+                <input id="quantity" name="quantity" type="number" min="1" max="100" value="2" required>
+              </div>
+              <div class="field">
+                <label for="unit_price">Unit price (₹)</label>
+                <input id="unit_price" name="unit_price" type="number" min="0.01" max="100000" step="0.01" value="450" required>
+              </div>
+            </div>
+            <div class="form-footer">
+              <p>Invoice details will be validated before processing.</p>
+              <button type="submit">Generate invoice <span>→</span></button>
+            </div>
+          </form>
+        </article>
+
+        <aside class="panel details-panel">
+          <p class="eyebrow">SYSTEM DETAILS</p>
+          <h2>Deployment info</h2>
+          <div class="detail-row"><span>Application version</span><strong>{{ version }}</strong></div>
+          <div class="detail-row"><span>Served by</span><strong>{{ host }}</strong></div>
+          <div class="detail-row"><span>Storage bucket</span><strong class="bucket-name">{{ bucket }}</strong></div>
+          <div class="secure-note"><span>✓</span><div><strong>Secure workflow</strong><p>Input validation and cloud storage are enabled.</p></div></div>
+        </aside>
+      </section>
+
+      <section class="panel history-panel" id="invoice-history">
+        <div class="panel-heading">
+          <div><p class="eyebrow">RECENT ACTIVITY</p><h2>Latest invoice files</h2></div>
+          <span class="history-count">{{ invoices|length }} file(s)</span>
+        </div>
+        {% if invoices %}
+          <ul class="invoice-list">
+            {% for name in invoices %}
+              <li><span class="file-icon">▧</span><span class="file-name">{{ name }}</span><span class="file-status">Saved</span></li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="empty-state"><span>▤</span><p>No invoices yet</p><small>Your generated invoice files will appear here.</small></div>
+        {% endif %}
+      </section>
+
+      <footer class="page-footer">
+        <span>© 2026 Invoice Cloud Demo · Designed by Vedant Padmawar</span>
+        <span>Flask <b>·</b> AWS <b>·</b> Docker <b>·</b> Kubernetes</span>
+      </footer>
+    </main>
   </div>
 </body>
 </html>
