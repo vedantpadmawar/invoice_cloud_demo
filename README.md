@@ -112,7 +112,7 @@ docker ps
 
 Windows PowerShell: replace `$(pwd)` with `${PWD}`.
 
-Open http://localhost:8080. **Served by** now shows the container ID. Then:
+Open http://43.204.214.236:30080. **Served by** now shows the container ID. Then:
 
 ```bash
 docker logs invoice-app
